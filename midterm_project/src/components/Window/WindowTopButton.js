@@ -1,7 +1,7 @@
 import "./WindowTopButton.css"
 
 const WindowTopButton = (props) => {
-    const {type} = props;
+    const {type, onClick} = props;
     let symbol = "";
     if (type==="close"){
         symbol = "X";
@@ -11,7 +11,7 @@ const WindowTopButton = (props) => {
         symbol = "[]";
     }
     return (
-        <div className = "window-top-button">
+        <div className = "window-top-button" onClick={onClick}>
             {symbol}
         </div>
     )
