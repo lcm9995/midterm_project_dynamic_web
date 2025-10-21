@@ -1,15 +1,17 @@
-import {useState} from "react"
-import './Window.css'
-import WindowTopBar from "./WindowTopBar"
+import {useState, useRef} from "react";
+import './Window.css';
+import WindowTopBar from "./WindowTopBar";
 import WindowBody from "./WindowBody";
 import WindowImage  from "./WindowImage";
 import WindowMessage from "./WindowMessage";
 import MediaPlayer from "./MediaPlayer/MediaPlayer";
+import Draggable from 'react-draggable'; 
 const Window = (props) => {
-    const {title="New Window", type, messageText, mediaSrc} = props;
-    const [isVisible, setIsVisable] = useState(true);
+    const {title="New Window", type, messageText, mediaSrc, mediaType="video", onClose} = props;
+    //const [isVisible, setIsVisable] = useState(true);
+    const nodeRef = useRef(null); // from https://www.windmill.dev/blog/react-draggable-component
     const handleClose = () => {
-        setIsVisable(false)
+        if (onClose) onClose();
     }
     //const displayTitle = type ==="media" ? "Media Player" : title;
     let displayTitle = title;
@@ -25,16 +27,18 @@ const Window = (props) => {
         displayTitle = "New Window";
     }*/
 
-    if (!isVisible) return null;
     return (
-        <div className = "window">
-            <WindowTopBar title = {displayTitle} onClose={handleClose}/>
-            <WindowBody>
-                {type==="message" ? <WindowMessage message = {messageText} buttonLabel="OK" onClose={handleClose} />: null}
-                {type==="image" ? <WindowImage src = {mediaSrc}/> : null }
-                {type==="media" ? <MediaPlayer mediaType="video" mediaTitle={mediaTitle} src={mediaSrc}/> : null}
-            </WindowBody>
-        </div>
+        <Draggable nodeRef={nodeRef}> 
+            <div className = "window" ref={nodeRef}>
+                {/* ^ SOURCE: from https://www.windmill.dev/blog/react-draggable-component*/}
+                <WindowTopBar title = {displayTitle} onClose={handleClose}/>
+                <WindowBody>
+                    {type==="message" ? <WindowMessage message = {messageText} buttonLabel="OK" onClose={handleClose} />: null}
+                    {type==="image" ? <WindowImage src = {mediaSrc}/> : null }
+                    {type==="media" ? <MediaPlayer mediaType={mediaType} mediaTitle={mediaTitle} src={mediaSrc}/> : null}
+                </WindowBody>
+            </div>
+        </Draggable>
     );
 };
 export default Window;
